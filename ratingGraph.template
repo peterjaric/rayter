@@ -1,0 +1,12 @@
+<graph caption='$GAMENAME$' xAxisName='Spel' yAxisName='Rating'
+  showValues='0' numberPrefix='' decimalPrecision='0' bgcolor='FFFFFF' bgAlpha='0' 
+  showColumnShadow='0' divlinecolor='c5c5c5' divLineAlpha='60' showAlternateHGridColor='0' 
+  alternateHGridColor='f8f8f8' alternateHGridAlpha='60' >
+
+  <categories>
+$CATEGORIES$
+  </categories>
+
+$DATASETS$
+
+</graph>
