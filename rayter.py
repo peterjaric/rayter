@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 import sys
-from parser import GamesParser
-from rater import Rater           
+import simplejson
+from game_parser import GamesParser
+from rater import Rater
 
 def random_color():
     pass
@@ -68,6 +69,12 @@ try:
             xml = xml.replace('$DATASETS$', datasets)
             graph_file = open('html/graph_%s.xml' % parser.game_name, "w")
             print >> graph_file, xml
+        elif sys.argv[2] == "json":
+            rating_dict = {}
+            for rating in ratings:
+                r = {"name":rating[0], "matches":rating[1], "rating":rating[2], "delta":rating[3]}
+                rating_dict[rating[0]] = r
+            print simplejson.dumps(rating_dict)
         else:
             name = sys.argv[2]
             player = rater.players[name]
