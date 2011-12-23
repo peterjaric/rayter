@@ -1,0 +1,84 @@
+game 2010-07-06 21:00
+Jessica 	21
+Jonatan		33
+Peter		39
+
+game 2010-07-06 22:00
+Jonatan		13
+Peter		21
+
+game 2010-07-07 20:00
+Jessica 	6
+Jonatan		18
+Peter		33
+
+game 2010-07-07 21:00
+Jessica 	0
+Jonatan		2
+Peter		5
+
+game 2010-07-08 21:00
+Jessica 	4
+Peter		20
+Axel		9
+Hanna		0
+
+game 2010-07-08 22:00
+Jessica 	8
+Peter		8
+Axel		20
+
+game 2010-07-09 22:00
+Hanna		15
+Hugo		3
+Peter		21
+Axel		22
+
+game 2010-07-09 23:00
+Hanna		11
+Hugo		5
+Peter		24
+Axel		11
+
+game 2010-07-09 23:30
+Viveka		33
+Jessica		19
+
+game 2010-07-10 23:00
+Peter 		19
+Hugo		18
+Viveka		6
+Lisa		1
+
+game 2010-07-12 22:00
+Axel 		24
+Viveka		6
+Jessica		7
+Peter		14
+
+game 2010-07-13 22:00
+Axel 		21
+Viveka		1
+Jessica		2
+Peter		11
+Hugo		6
+
+game 2010-07-13 23:00
+Viveka		0
+Jessica		3
+Peter		10
+Hugo		0
+
+game 2010-07-14 22:00
+Axel 		23
+Viveka		3
+Peter		16
+Hugo		8
+
+game 2010-07-16 23:00
+Axel 		5
+Viveka		0
+Peter		6
+Jessica		6
+Hanna		0
+

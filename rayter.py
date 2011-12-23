@@ -1,7 +1,8 @@
+
 #!/usr/bin/python
 
 import sys
-import simplejson
+import json
 from game_parser import GamesParser
 from rater import Rater
 from optparse import OptionParser
