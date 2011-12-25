@@ -7,13 +7,13 @@ from rater import Rater
 from optparse import OptionParser
 
 def parse_file(filename, mode="text", player_name=None):
+    out = []
+    
     try:
         parser = GamesParser(filename)
         games = parser.parse_file()
         rater = Rater(games)
         ratings = rater.rate_games(parser.score_type)
-        
-        out = []
         
         if mode == "gnuplot":
             commands = 'set key left\n'
