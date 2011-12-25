@@ -69,7 +69,7 @@ class GamesParser:
             return None
 
     def parse_score(self, line, game_dict):
-        score_exp = '^([a-zA-Z]+)\s+([0-9]+)'
+        score_exp = '^([a-zA-Z\+]+)\s+([0-9]+)'
         m = re.match(score_exp, line)
         if m is not None:
             if game_dict is None:
