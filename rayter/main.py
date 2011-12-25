@@ -10,8 +10,9 @@ def parse_file(filename, mode="text", player_name=None):
     out = []
     
     try:
-        parser = GamesParser(filename)
-        games = parser.parse_file()
+        with file(filename) as f:
+            parser = GamesParser(f, filename)
+            games = parser.parse_file()
         rater = Rater(games)
         ratings = rater.rate_games(parser.score_type)
         

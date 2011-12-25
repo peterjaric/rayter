@@ -30,10 +30,10 @@ import math
 #from time import strptime
 
 class GamesParser:
-    def __init__(self, filename):
-        self.filename = filename
+    def __init__(self, file_obj, name):
+        self.file = file_obj
         self.score_type = 'highscore'
-        self.game_name = filename
+        self.game_name = name
 
     def parse_type(self, line):
         type_exp = '^score_type\s+(lowscore|highscore)$'
@@ -83,12 +83,11 @@ class GamesParser:
             return False
 
     def parse_file(self):
-        f = open(self.filename)
         self.games = []
         current_game = None
         self.line_no = 0
 
-        for line in f:
+        for line in self.file:
             self.line_no += 1
  
             # Comments (TODO: refactor into method to match rest of method)
