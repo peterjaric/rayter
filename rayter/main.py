@@ -62,11 +62,11 @@ def main():
                     rating = player.rating_history[game_num]
                     print "%d %d" % (game_num, rating)
         else:
-            print "Spel: %s" % parser.game_name
-            print "Totalt antal matcher: %s" % len(games)
+            print "Game: %s" % parser.game_name
+            print "Total number of games: %s" % len(games)
             hformat = "%-15s%-10s%-10s%-10s"
             rformat = "%-15s%7d%9d%9d"
-            print hformat % ("Namn", "Matcher", "Rating", "Delta")
+            print hformat % ("Name", "Games", "Rating", "Delta")
             for rating in ratings:
                 print rformat % rating
             
