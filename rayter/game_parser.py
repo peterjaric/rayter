@@ -36,7 +36,7 @@ class GamesParser:
         self.game_name = filename
 
     def parse_type(self, line):
-        type_exp = '^score_type (lowscore|highscore)$'
+        type_exp = '^score_type\s+(lowscore|highscore)$'
         m = re.match(type_exp, line)
         if m is not None:
                 self.score_type = m.group(1)
@@ -45,7 +45,7 @@ class GamesParser:
             return False
 
     def parse_game_name(self, line):
-        name_exp = '^game_name (.+)$'
+        name_exp = '^game_name\s+(.+)$'
         m = re.match(name_exp, line)
         if (m is not None):
                 self.game_name = m.group(1)
@@ -54,7 +54,7 @@ class GamesParser:
             return False
 
     def parse_game(self, line):
-        game_exp = '^game ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2})'
+        game_exp = '^game\s+([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2})'
         m = re.match(game_exp, line)
         if m is not None:
             time_string = m.group(1)
