@@ -1,0 +1,4 @@
+*.pyc
+rayter.egg-info/**
+rayter.wpr
+dist/**

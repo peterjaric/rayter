@@ -22,7 +22,10 @@ class Rater:
         return self.calculate_new_rating_keep_average(score_type, player, game)
 
     def calculate_new_rating_betapet(self, score_type, player, game):
-        """Calculates new rating for a player based on old rating and result in the given game. See http://betapet.com/rating for an explanation."""
+        """
+        Calculates new rating for a player based on old rating and result in the 
+        given game. See http://betapet.com/rating for an explanation.
+        """
         square_scores = True
         use_diminishing = False
 
@@ -61,7 +64,12 @@ class Rater:
 
 
     def calculate_new_rating_keep_average(self, score_type, player, game):
-        """Calculates new rating for a player based on old rating and result in the given game. The average rating will be the same before and after this calculation has been called for all players."""
+        """
+        Calculates new rating for a player based on old rating and result in the 
+        given game. The average rating will be the same before and after this 
+        calculation has been called for all players.
+        """
+        
         old_rating = self.players[player].get_rating()
         # Using max to make 0 the lowest possible score
         score = max(game['scores'][player], 0)
