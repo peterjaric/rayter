@@ -6,28 +6,16 @@ from game_parser import GamesParser
 from rater import Rater
 from optparse import OptionParser
 
-def main():
-    opt_parser = OptionParser(usage = "usage: %prog [options] <game file>")
-    opt_parser.add_option("-m", "--mode", dest="mode", default="text",
-                      help="output mode (text, html, gnuplot, json)")
-    opt_parser.add_option("-p", "--player", dest="player",
-                      help="player name")
-    
-    (options, args) = opt_parser.parse_args()
-    
-    if len(args) < 1:
-        print >> sys.stderr, "Error: No game file specified. Try", sys.argv[0], "-h."
-        exit(1)
-    
-    
+def parse_file(filename, mode="text", player_name=None):
     try:
-        filename = args[0]
         parser = GamesParser(filename)
         games = parser.parse_file()
         rater = Rater(games)
         ratings = rater.rate_games(parser.score_type)
-    
-        if options.mode == "gnuplot":
+        
+        out = []
+        
+        if mode == "gnuplot":
             commands = 'set key left\n'
             plot_command = 'plot "%s" with lines lw 2 title "%s"\n'
             
@@ -47,31 +35,47 @@ def main():
             command_file_name = "plot_commands.gnuplot"
             command_file = open(command_file_name, "w")
             print >> command_file, commands
-            print "Run 'gnuplot %s' to plot all ratings." % command_file_name 
-        elif options.mode == "json":
+            out.append("Run 'gnuplot %s' to plot all ratings." % command_file_name)
+        elif mode == "json":
             rating_dict = {}
             for rating in ratings:
                 r = {"name":rating[0], "matches":rating[1], "rating":rating[2], "delta":rating[3]}
                 rating_dict[rating[0]] = r
-            print simplejson.dumps(rating_dict)
-        elif not options.player is None:
-            name = options.player
-            player = rater.players[name]
+            out.append(simplejson.dumps(rating_dict))
+        elif player_name is not None:
+            player = rater.players[player_name]
             if player:
                 for game_num in sorted(player.rating_history.keys()):
                     rating = player.rating_history[game_num]
-                    print "%d %d" % (game_num, rating)
+                    out.append("%d %d" % (game_num, rating))
         else:
-            print "Game: %s" % parser.game_name
-            print "Total number of games: %s" % len(games)
+            out.append("Game: %s" % parser.game_name)
+            out.append("Total number of games: %s" % len(games))
             hformat = "%-15s%-10s%-10s%-10s"
             rformat = "%-15s%7d%9d%9d"
-            print hformat % ("Name", "Games", "Rating", "Delta")
+            out.append(hformat % ("Name", "Games", "Rating", "Delta"))
             for rating in ratings:
-                print rformat % rating
-            
+                out.append(rformat % rating)
     except IOError as ioe:
-        print ioe
+        out.append(str(ioe))
+    
+    return "\n".join(out)
+
+def main():
+    opt_parser = OptionParser(usage = "usage: %prog [options] <game file>")
+    opt_parser.add_option("-m", "--mode", dest="mode", default="text",
+                      help="output mode (text, html, gnuplot, json)")
+    opt_parser.add_option("-p", "--player", dest="player",
+                      help="player name")
+    
+    (options, args) = opt_parser.parse_args()
+    
+    if len(args) < 1:
+        print >> sys.stderr, "Error: No game file specified. Try", sys.argv[0], "-h."
+        exit(1)
+    
+    print parse_file(args[0], options.mode, options.player)
+
 
 if __name__ == '__main__':
     main()
