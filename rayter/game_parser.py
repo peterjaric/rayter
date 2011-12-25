@@ -30,13 +30,13 @@ import math
 #from time import strptime
 
 class GamesParser:
-    def __init__(self, filename):
-        self.filename = filename
+    def __init__(self, file_obj, name):
+        self.file = file_obj
         self.score_type = 'highscore'
-        self.game_name = filename
+        self.game_name = name
 
     def parse_type(self, line):
-        type_exp = '^score_type (lowscore|highscore)$'
+        type_exp = '^score_type\s+(lowscore|highscore)$'
         m = re.match(type_exp, line)
         if m is not None:
                 self.score_type = m.group(1)
@@ -45,7 +45,7 @@ class GamesParser:
             return False
 
     def parse_game_name(self, line):
-        name_exp = '^game_name (.+)$'
+        name_exp = '^game_name\s+(.+)$'
         m = re.match(name_exp, line)
         if (m is not None):
                 self.game_name = m.group(1)
@@ -54,7 +54,7 @@ class GamesParser:
             return False
 
     def parse_game(self, line):
-        game_exp = '^game ([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2})'
+        game_exp = '^game\s+([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2})'
         m = re.match(game_exp, line)
         if m is not None:
             time_string = m.group(1)
@@ -69,7 +69,7 @@ class GamesParser:
             return None
 
     def parse_score(self, line, game_dict):
-        score_exp = '^([a-zA-Z]+)\s+([0-9]+)'
+        score_exp = '^([a-zA-Z\+]+)\s+([0-9]+)'
         m = re.match(score_exp, line)
         if m is not None:
             if game_dict is None:
@@ -83,12 +83,11 @@ class GamesParser:
             return False
 
     def parse_file(self):
-        f = open(self.filename)
         self.games = []
         current_game = None
         self.line_no = 0
 
-        for line in f:
+        for line in self.file:
             self.line_no += 1
  
             # Comments (TODO: refactor into method to match rest of method)
