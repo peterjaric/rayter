@@ -45,7 +45,7 @@ Jakob       70
 
 **score_type lowscore** means that in this game the goal is to have as low 
 score as possible. The options for **score_type** are **lowscore** and **highscore**, 
-and the latter is the default (if not type is specified).
+and the latter is the default (if score_typ isn't specified).
 
 Number of whitespace characters doesn't matter.
 
