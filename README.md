@@ -51,8 +51,12 @@ Number of whitespace characters doesn't matter.
 
 ## Rayter algorithm
 
-The rating algorithm that is used is a variant of the algorithm used by Swedish 
-Scrabble website Betapet (http://betapet.com). Here is a description, in Swedish,
-of the algorithm: http://betapet.com/rating
+Every player starts with 1000 in rating. The sum of all ratings will always be 1000 * the 
+number of players in the league. So if one player gets +60 rating in a game, and all other 
+players looses rating, the sum of their rating change will be -60. 
 
-TODO: Describe the rayter algorithm.
+If a player with 1200 rating is playing against an opponent with 1000 rating. The first 
+player is expected to get 20% more points than the second one. Therefore, if the first 
+player gets 240 points, and the second player gets 200, both will get 0 rating change.
+
+For more details see **rater.py**.
