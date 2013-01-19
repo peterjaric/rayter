@@ -1,6 +1,6 @@
 START_RATING = 1000
 
-class Player:
+class Player(object):
     def __init__(self, name):
         self.rating_history = {}
 #        self.set_rating(START_RATING, 0)
