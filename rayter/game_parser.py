@@ -30,7 +30,7 @@ import math
 #from time import strptime
 
 class GamesParser(object):
-    def __init__(self, file_obj, name):
+    def __init__(self, file_obj, name=None):
         self.file = file_obj
         self.score_type = 'highscore'
         self.game_name = name
