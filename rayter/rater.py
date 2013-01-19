@@ -12,7 +12,7 @@ def to_lowscore(score, scores):
     min_score_in_game = min(scores)
     return max_score_in_game - score + min_score_in_game
 
-class Rater:
+class Rater(object):
     def __init__(self, games):
         self.games = games
         self.players = {}
