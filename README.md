@@ -50,7 +50,7 @@ and **highscore** (the default, if score_type is not specified).
 Number of whitespace characters doesn't matter.
 
 The format of the timestamp is year-month-day hour:minute, where hour
-is from 0 to 23. The date is currently not used more than as an
+is from 0 to 23. The timestamp is currently not used more than as an
 identifier of the game.
 
 ## Rayter algorithm
