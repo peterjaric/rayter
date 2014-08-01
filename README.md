@@ -67,7 +67,7 @@ points in the game, and the second player scores 200, the rating
 change of both players will be 0, since 240 divided by 200 equals 1200
 divided by 1000.
 
-Eaxmple:
+Example:
 
 Here are some results in a made-up card game:
 
