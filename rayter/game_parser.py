@@ -27,13 +27,17 @@
 import re
 import sys
 import math
-#from time import strptime
+
+
+class UnexpectedStatementError(Exception): pass
+
 
 class GamesParser(object):
     def __init__(self, file_obj, name=None):
         self.file = file_obj
         self.score_type = 'highscore'
         self.game_name = name
+        self.errors = []
 
     def parse_type(self, line):
         type_exp = '^score_type\s+(lowscore|highscore)$'
@@ -54,14 +58,11 @@ class GamesParser(object):
             return False
 
     def parse_game(self, line):
-        game_exp = '^game\s+([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2})'
+        game_exp = '^game\s+([0-9]{4}-[0-9]{2}-[0-9]{2}\s+[0-9]{2}[:.][0-9]{2})\s*$'
         m = re.match(game_exp, line)
         if m is not None:
             time_string = m.group(1)
-#            time_format = "%Y-%m-%d %H:%M"
-#            time = strptime(time_string, time_format)
             return { 
-#                'time': time,
                 'time': time_string,
                 'scores': {}
                 }
@@ -69,11 +70,11 @@ class GamesParser(object):
             return None
 
     def parse_score(self, line, game_dict):
-        score_exp = '^([a-zA-Z\+]+)\s+([0-9]+)'
+        score_exp = '^([a-zA-Z\+]+)\s+(-?[0-9]+)\s*$'
         m = re.match(score_exp, line)
         if m is not None:
             if game_dict is None:
-                print 'Spurious score on line', self.line_no
+                raise UnexpectedStatementError('Spurious score (no current game) on line %i' % self.line_no)
             else:
                 name = m.group(1)
                 score = int(m.group(2))
@@ -82,6 +83,12 @@ class GamesParser(object):
         else:
             return False
 
+    def parse_comment(self, line):
+        return re.match('^#.*$', line) is not None
+
+    def parse_empty_line(self, line):
+        return re.match('^\s*$', line) is not None
+
     def parse_file(self):
         self.games = []
         current_game = None
@@ -89,29 +96,29 @@ class GamesParser(object):
 
         for line in self.file:
             self.line_no += 1
- 
-            # Comments (TODO: refactor into method to match rest of method)
-            if re.match('^\s*(#.*)?$', line) is not None:
-                continue
-            
-            if self.parse_type(line):
-                continue
+            try:
+                if self.parse_comment(line) or self.parse_empty_line(line):
+                    continue
+                
+                if self.parse_type(line):
+                    continue
 
-            if self.parse_game_name(line):
-                continue
+                if self.parse_game_name(line):
+                    continue
 
-            result = self.parse_game(line)
-            if result:
-                if current_game is not None:
-                    self.games.append(current_game)
-                current_game = result
-                continue
+                if self.parse_score(line, current_game):
+                    continue
 
-            result = self.parse_score(line, current_game)
-            if result:
-                continue
-
-            print 'Unknown format on line', self.line_no
+                new_game = self.parse_game(line)
+                if new_game:
+                    if current_game is not None:
+                        self.games.append(current_game)
+                    current_game = new_game
+                    continue
+    
+                raise UnexpectedStatementError('Syntax error on line %i: %s' % (self.line_no, line))
+            except UnexpectedStatementError as e:
+                self.errors.append(e.message)
         
         if current_game is not None:
             self.games.append(current_game)

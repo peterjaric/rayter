@@ -13,9 +13,13 @@ def parse_file(filename, mode="text", player_name=None):
         with file(filename) as f:
             parser = GamesParser(f, filename)
             games = parser.parse_file()
+            for error in parser.errors:
+                print error
+
         rater = Rater(games)
         ratings = rater.rate_games(parser.score_type)
         
+
         if mode == "gnuplot":
             commands = 'set key left\n'
             plot_command = 'plot "%s" with lines lw 2 title "%s"\n'
@@ -42,7 +46,7 @@ def parse_file(filename, mode="text", player_name=None):
             for rating in ratings:
                 r = {"name":rating[0], "matches":rating[1], "rating":rating[2], "delta":rating[3]}
                 rating_dict[rating[0]] = r
-            out.append(simplejson.dumps(rating_dict))
+            out.append(json.dumps(rating_dict))
         elif player_name is not None:
             player = rater.players[player_name]
             if player:
