@@ -12,55 +12,23 @@ def to_lowscore(score, scores):
     min_score_in_game = min(scores)
     return max_score_in_game - score + min_score_in_game
 
+def to_normalized_score(score, scores):
+    """
+    Increases score with the absolute value of the lowest score in the game if it is negative.
+    """
+    min_score_in_game = min(scores)
+    if min_score_in_game < 0:
+        return score - min_score_in_game
+    else:
+        return score
+
 class Rater(object):
     def __init__(self, games):
         self.games = games
         self.players = {}
 
-
     def calculate_new_rating(self, score_type, player, game):
         return self.calculate_new_rating_keep_average(score_type, player, game)
-
-    def calculate_new_rating_betapet(self, score_type, player, game):
-        """
-        Calculates new rating for a player based on old rating and result in the 
-        given game. See http://betapet.com/rating for an explanation.
-        """
-        square_scores = True
-        use_diminishing = False
-
-        old_rating = self.players[player].get_rating()
-        # Using max to make 0 the lowest possible score
-        score = max(game['scores'][player], 0)
-        scores = game['scores'].values()
-
-        if score_type == 'lowscore':
-            score = to_lowscore(score, scores)
-            scores = [to_lowscore(s, scores) for s in scores]
-
-        if square_scores:
-            # square scores
-            score = score ** 2
-            scores_sum = math.fsum(max(s, 0) ** 2 for s in scores)
-        else:
-            scores_sum = math.fsum(max(s, 0) for s in scores)
-            
-        # TODO: Need to handle scores_sum == 0. Check betapet... 
-        old_ratings_sum = math.fsum(self.players[p].get_rating() for p in game['scores'].keys())
-
-        games = self.players[player].get_game_count()
-        if use_diminishing:
-            diminishing_part = 0.2 * math.exp(-0.1 * games)
-        else:
-            diminishing_part = 0
-
-        change = ((score / scores_sum - 
-                   old_rating / old_ratings_sum) * 
-                  old_rating * 
-                  (0.1 + diminishing_part))
-        new_rating = old_rating + change
-        
-        return new_rating
 
 
     def calculate_new_rating_keep_average(self, score_type, player, game):
@@ -71,9 +39,10 @@ class Rater(object):
         """
         
         old_rating = self.players[player].get_rating()
-        # Using max to make 0 the lowest possible score
-        score = max(game['scores'][player], 0)
-        scores = game['scores'].values()
+
+        raw_scores = game['scores'].values()
+        score = to_normalized_score(game['scores'][player], raw_scores)    
+        scores = [to_normalized_score(s, raw_scores) for s in raw_scores]
 
         if score_type == 'lowscore':
             score = to_lowscore(score, scores)
@@ -99,7 +68,7 @@ class Rater(object):
         else:
             return 0
         
-    def rate_games(self, score_type): 
+    def rate_games(self, score_type):
         game_num = 0
         for game in self.games:
             game_num += 1
