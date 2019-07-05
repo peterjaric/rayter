@@ -1,6 +1,6 @@
 # File format:
 # 
-# [score_type lowscore|highscore]
+# [score_type lowscore|highscore|winnertakesall]
 # [game_name <name>]
 # 
 # game <time>
@@ -40,7 +40,7 @@ class GamesParser(object):
         self.errors = []
 
     def parse_type(self, line):
-        type_exp = '^score_type\s+(lowscore|highscore)$'
+        type_exp = '^score_type\s+(lowscore|highscore|winnertakesall)$'
         m = re.match(type_exp, line)
         if m is not None:
                 self.score_type = m.group(1)

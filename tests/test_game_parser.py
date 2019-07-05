@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from rayter.game_parser import GamesParser
 
+
 class GamesParserTest(TestCase):
     def test_parse_name(self):
         data = \
@@ -14,7 +15,7 @@ game_name Settlers of Catan
         parser.parse_file()
         self.assertEqual("Settlers of Catan", parser.game_name)
         self.assertEqual(len(parser.errors), 0)
-    
+
     def test_parse_score_type(self):
         data = \
 """
@@ -26,7 +27,17 @@ score_type lowscore
         parser.parse_file()
         self.assertEqual("lowscore", parser.score_type)
         self.assertEqual(len(parser.errors), 0)
-    
+        data = \
+"""
+game_name Settlers of Catan
+score_type winnertakesall
+
+"""
+        parser = GamesParser(StringIO(data), "test")
+        parser.parse_file()
+        self.assertEqual("winnertakesall", parser.score_type)
+        self.assertEqual(len(parser.errors), 0)
+
     def test_parse_games(self):
         data = \
 """
@@ -44,7 +55,7 @@ Molgan     231
         parser.parse_file()
         self.assertEqual(2, len(parser.games))
         self.assertEqual(len(parser.errors), 0)
-    
+
     def test_parse_minus(self):
         data = \
 """
@@ -81,4 +92,3 @@ Molgan     -666
         parser = GamesParser(StringIO(data), "test")
         parser.parse_file()
         self.assertEqual(len(parser.errors), 0)
-

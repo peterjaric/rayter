@@ -40,18 +40,27 @@ class Rater(object):
         
         old_rating = self.players[player].get_rating()
 
+        # Normalize scores if there are negative scores
         raw_scores = game['scores'].values()
         score = to_normalized_score(game['scores'][player], raw_scores)    
         scores = [to_normalized_score(s, raw_scores) for s in raw_scores]
 
+        # Switch to lowe scores if score_type is lowscore
         if score_type == 'lowscore':
             score = to_lowscore(score, scores)
             scores = [to_lowscore(s, scores) for s in scores]
 
+        # Calculate sums
         scores_sum = math.fsum(max(s, 0) for s in scores)
         old_ratings_sum = math.fsum(self.players[p].get_rating() for p in game['scores'].keys())
             
-        K = 0.05
+        # Choose how big part of their rating each player puts in
+        if score_type == 'winnertakesall':
+            K = 0.02
+        else
+            K = 0.05
+
+        # Calculate new rating
         rating_in = K * old_rating
         rating_out = (score / scores_sum) * K * old_ratings_sum
         change = rating_out - rating_in

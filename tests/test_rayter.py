@@ -23,3 +23,21 @@ Molgan     -666
         rater = Rater(parser.games)
         rater.rate_games(parser.score_type)
         self.assertNotEqual(rater.players['Hugo'].get_rating(), rater.players['Molgan'].get_rating())
+
+    def test_rate_winnertakesall_game(self):
+        data = \
+"""
+game_name Winner Takes All
+score_type winnertakesall
+
+game 2019-07-05 15:12
+Jonatan 0
+Hugo 0
+Molgan 1
+"""
+        parser = GamesParser(StringIO(data), "test")
+        parser.parse_file()
+        rater = Rater(parser.games)
+        rater.rate_games(parser.score_type)
+        self.assertEqual(rater.players['Hugo'].get_rating(), rater.players['Jonatan'].get_rating())
+        self.assertGreater(rater.players['Molgan'].get_rating(), rater.players['Hugo'].get_rating())
