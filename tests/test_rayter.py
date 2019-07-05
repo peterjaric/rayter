@@ -5,7 +5,6 @@ from pprint import pprint
 from rayter.rater import Rater
 from rayter.game_parser import GamesParser
 
-from rayter import rater
 
 class RaterTest(TestCase):
     def test_rate_game_with_negative_score(self):
@@ -22,7 +21,8 @@ Molgan     -666
         parser.parse_file()
         rater = Rater(parser.games)
         rater.rate_games(parser.score_type)
-        self.assertNotEqual(rater.players['Hugo'].get_rating(), rater.players['Molgan'].get_rating())
+        self.assertNotEqual(rater.players['Hugo'].get_rating(),
+                            rater.players['Molgan'].get_rating())
 
     def test_rate_winnertakesall_game(self):
         data = \
@@ -39,5 +39,10 @@ Molgan 1
         parser.parse_file()
         rater = Rater(parser.games)
         rater.rate_games(parser.score_type)
-        self.assertEqual(rater.players['Hugo'].get_rating(), rater.players['Jonatan'].get_rating())
-        self.assertGreater(rater.players['Molgan'].get_rating(), rater.players['Hugo'].get_rating())
+        self.assertEqual(rater.players['Hugo'].get_rating(),
+                         rater.players['Jonatan'].get_rating())
+        self.assertGreater(rater.players['Molgan'].get_rating(),
+                           rater.players['Hugo'].get_rating())
+        self.assertNotEqual(
+            rater.players['Molgan'].get_rating() -
+            rater.players['Hugo'].get_rating(), 150)

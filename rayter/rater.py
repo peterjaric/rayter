@@ -57,7 +57,7 @@ class Rater(object):
         # Choose how big part of their rating each player puts in
         if score_type == 'winnertakesall':
             K = 0.02
-        else
+        else:
             K = 0.05
 
         # Calculate new rating

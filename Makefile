@@ -1,9 +1,9 @@
 test:
-	python tests/runtests.py
+	python -m unittest tests.runtests
 
-dist: dist/*
+dist: test dist/*
 	rm -f dist/*
 	python setup.py sdist
 
-upload:
+upload: dist
 	twine upload dist/*
