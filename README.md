@@ -25,11 +25,11 @@ Rayter can be used as a python library
 
 ```python
 >>> from rayter.rater import rate_single_game, SCORE_TYPE_HIGH_SCORE
->>> scores = [100, 74, 93]
+>>> scores = [100, 93, 74]
 >>> ratings = [1889, 1400, 1662]
 >>> rating_changes = rate_single_game(scores, ratings, score_type=SCORE_TYPE_HIGH_SCORE)
 >>> rating_changes
-[-1.7346441947565552, -1.3906367041198422, 3.1252808988764116]
+[-1.7346441947565552, 16.22528089887642, -14.49063670411985]
 ```
 
 ## Rayter file format
