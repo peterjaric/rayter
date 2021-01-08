@@ -1,7 +1,7 @@
 import math
 import time
 
-from player import Player
+from .player import Player
 
 SCORE_TYPE_HIGH_SCORE = 'highscore'
 SCORE_TYPE_LOW_SCORE = 'lowscore'
@@ -85,7 +85,6 @@ class Rater(object):
     def calculate_new_rating(self, score_type, player, game):
         return self.calculate_new_rating_keep_average(score_type, player, game)
 
-
     def calculate_new_rating_keep_average(self, score_type, player, game):
         """
         Calculates new rating for a player based on old rating and result in the 
@@ -103,15 +102,6 @@ class Rater(object):
 
         rating_changes = rate_single_game(scores, ratings, score_type=score_type)
         return ratings[player_idx] + rating_changes[player_idx]
-
-
-    def cmp_rating(self, p1, p2):
-        if self.players[p1].get_rating() < self.players[p2].get_rating():
-            return -1
-        elif self.players[p1].get_rating() > self.players[p2].get_rating():
-            return 1
-        else:
-            return 0
         
     def rate_games(self, score_type):
         game_num = 0
@@ -135,9 +125,8 @@ class Rater(object):
             #rats = [self.players[p].get_rating() for p in self.players]
             #print math.fsum(rats) / len(rats)
 
-
-        sorted_players = self.players.keys()
-        sorted_players.sort(self.cmp_rating, reverse=True) 
+        sorted_players = list(self.players.keys())
+        sorted_players.sort(key=lambda p: self.players[p].get_rating(), reverse=True) 
 
         ratings = []
         for player in sorted_players:

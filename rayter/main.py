@@ -2,19 +2,19 @@
 
 import sys
 import json
-from game_parser import GamesParser
-from rater import Rater
+from .game_parser import GamesParser
+from .rater import Rater
 from optparse import OptionParser
 
 def parse_file(filename, mode="text", player_name=None):
     out = []
     
     try:
-        with file(filename) as f:
+        with open(filename) as f:
             parser = GamesParser(f, filename)
             games = parser.parse_file()
             for error in parser.errors:
-                print error
+                print(error)
 
         rater = Rater(games)
         ratings = rater.rate_games(parser.score_type)
@@ -34,12 +34,12 @@ def parse_file(filename, mode="text", player_name=None):
                     player_file = open(player_file_name, "w")  
                     for game_num in range(player.get_first_game() - 1, len(games) + 1):
                         rating = player.get_rating(game_num)
-                        print >> player_file, "%d %d" % (game_num, rating)
+                        print("%d %d" % (game_num, rating), file=player_file)
     
             commands += 'pause mouse\n'
             command_file_name = "plot_commands.gnuplot"
             command_file = open(command_file_name, "w")
-            print >> command_file, commands
+            print(commands, file=command_file)
             out.append("Run 'gnuplot %s' to plot all ratings." % command_file_name)
         elif mode == "json":
             rating_dict = {}
@@ -76,10 +76,10 @@ def main():
     (options, args) = opt_parser.parse_args()
     
     if len(args) < 1:
-        print >> sys.stderr, "Error: No game file specified. Try", sys.argv[0], "-h."
+        print("Error: No game file specified. Try", sys.argv[0], "-h.", file=sys.stderr)
         exit(1)
     
-    print parse_file(args[0], options.mode, options.player)
+    print(parse_file(args[0], options.mode, options.player))
 
 
 if __name__ == '__main__':

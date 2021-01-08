@@ -118,7 +118,7 @@ class GamesParser(object):
     
                 raise UnexpectedStatementError('Syntax error on line %i: %s' % (self.line_no, line))
             except UnexpectedStatementError as e:
-                self.errors.append(e.message)
+                self.errors.append(e.args[0])
         
         if current_game is not None:
             self.games.append(current_game)

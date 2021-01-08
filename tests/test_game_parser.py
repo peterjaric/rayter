@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 from unittest import TestCase
 
 from rayter.game_parser import GamesParser
@@ -82,6 +82,7 @@ Molgan     -666
         parser = GamesParser(StringIO(data), "test")
         parser.parse_file()
         self.assertEqual(len(parser.errors), 3)
+        self.assertEqual("Syntax error on line 4: game 2012-01+19 15:12\n", parser.errors[0])
 
     def test_parse_comments(self):
         data = \

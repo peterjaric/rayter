@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 from datetime import datetime
 from unittest import TestCase
 from pprint import pprint
