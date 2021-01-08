@@ -3,29 +3,40 @@
 Rayter is a program for generating player ratings from a number of games, 
 with the results stored in a file. 
 
-## Installing rayter
+It can be used in the form as a command line program, or as a Python library.
+
+## Installing Rayter
 
 <pre>
 pip install rayter
 </pre>
 
-or
 
-<pre>
-easy_install rayter
-</pre>
-
-## Running rayter
+## Running Rayter Command Line Tool
 
 <pre>
 rayter games_file.txt
 </pre>
 
 
+## Using Rayter as a library
+
+Rayter can be used as a python library
+
+```python
+>>> from rayter.rater import rate_single_game, SCORE_TYPE_HIGH_SCORE
+>>> scores = [100, 74, 93]
+>>> ratings = [1889, 1400, 1662]
+>>> rating_changes = rate_single_game(scores, ratings, score_type=SCORE_TYPE_HIGH_SCORE)
+>>> rating_changes
+[-1.7346441947565552, -1.3906367041198422, 3.1252808988764116]
+```
+
 ## Rayter file format
 
-The rayter file format is designed to be easily created by hand using a text 
-editor. Here is an example for a file containing two games of Hearts:
+The rayter file format expected by the Rayter Command Line Tool is designed 
+to be easily created by hand using a text editor. Here is an example for a 
+file containing two games of Hearts:
 
 <pre>
 score_type lowscore
@@ -44,8 +55,9 @@ Jakob       70
 </pre>
 
 **score_type lowscore** means that in this game the goal is to have as
-low score as possible. The options for **score_type** are **lowscore**
-and **highscore** (the default, if score_type is not specified).
+low score as possible. The options for `score_type` are `lowscore`, 
+`highscore` (the default, if score_type is not specified), and 
+`winner_takes_all` (used for games with binary results, e.g. Chess).
 
 Number of whitespace characters doesn't matter.
 
@@ -53,7 +65,7 @@ The format of the timestamp is year-month-day hour:minute, where hour
 is from 0 to 23. The timestamp is currently not used more than as an
 identifier of the game.
 
-## Rayter algorithm
+## Rayter Algorithm
 
 Every player starts with a rating of 1000. The sum of all ratings will
 always be 1000 * the number of players in the league. So if one player
@@ -105,17 +117,4 @@ Ahmed                2      962      -30
 Lei                  2      951      -30
 </pre>
 
-For more details see **rater.py**.
-
-## Using Rayter as a library
-
-Rayter can be used as a python library
-
-```python
->>> from rayter.rater import rate_single_game, SCORE_TYPE_HIGH_SCORE
->>> scores = [100, 74, 93]
->>> ratings = [1889, 1400, 1662]
->>> rating_changes = rate_single_game(scores, ratings, score_type=SCORE_TYPE_HIGH_SCORE)
->>> rating_changes
-[-1.7346441947565552, -1.3906367041198422, 3.1252808988764116]
-```
+For the full details see the `rate_single_game()` function in `rater.py`.
