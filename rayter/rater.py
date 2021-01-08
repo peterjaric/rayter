@@ -60,6 +60,12 @@ class Rater(object):
         else:
             K = 0.05
 
+        # If scores_sum is 0, it means that all scores are 0, since we've normalized 
+        # scores to not contain any negative values
+        if scores_sum == 0:
+            scores_sum = 100.0 * len(scores)
+            score = 100.0
+
         # Calculate new rating
         rating_in = K * old_rating
         rating_out = (score / scores_sum) * K * old_ratings_sum
