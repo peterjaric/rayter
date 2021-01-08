@@ -106,3 +106,16 @@ Lei                  2      951      -30
 </pre>
 
 For more details see **rater.py**.
+
+## Using Rayter as a library
+
+Rayter can be used as a python library
+
+```python
+>>> from rayter.rater import rate_single_game, SCORE_TYPE_HIGH_SCORE
+>>> scores = [100, 74, 93]
+>>> ratings = [1889, 1400, 1662]
+>>> rating_changes = rate_single_game(scores, ratings, score_type=SCORE_TYPE_HIGH_SCORE)
+>>> rating_changes
+[-1.7346441947565552, -1.3906367041198422, 3.1252808988764116]
+```

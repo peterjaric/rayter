@@ -1,11 +1,12 @@
 from StringIO import StringIO
+from datetime import datetime
 from unittest import TestCase
 from pprint import pprint
 from textwrap import dedent
 
-from rayter.rater import Rater
+from rayter.rater import Rater, rate_single_game, SCORE_TYPE_HIGH_SCORE
+from rayter.player import Player
 from rayter.game_parser import GamesParser
-
 
 class RaterTest(TestCase):
     def test_rate_game_with_negative_score(self):
@@ -94,3 +95,11 @@ class RaterTest(TestCase):
         self.assertNotEqual(
             rater.players['Molgan'].get_rating() -
             rater.players['Hugo'].get_rating(), 150)
+    
+    def test_rate_one_game(self):
+        rating_changes = rate_single_game([100, 100], [1200, 1000], score_type=SCORE_TYPE_HIGH_SCORE)
+        self.assertEqual([-5, 5], rating_changes)
+    
+    def test_rate_one_game_custom_K(self):
+        rating_changes = rate_single_game([100, 100], [1200, 1000], score_type=SCORE_TYPE_HIGH_SCORE, K=0.1)
+        self.assertEqual([-10, 10], rating_changes)

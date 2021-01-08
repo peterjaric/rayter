@@ -3,9 +3,10 @@ import time
 
 from player import Player
 
-#def to_lowscore(score, scores):
-#    max_score_in_game = max(scores)
-#    return max_score_in_game - score
+SCORE_TYPE_HIGH_SCORE = 'highscore'
+SCORE_TYPE_LOW_SCORE = 'lowscore'
+SCORE_TYPE_WINNER_TAKES_ALL = 'winnertakesall'
+
 
 def to_lowscore(score, scores):
     max_score_in_game = max(scores)
@@ -22,6 +23,60 @@ def to_normalized_score(score, scores):
     else:
         return score
 
+
+def rate_single_game(scores, ratings, score_type=SCORE_TYPE_HIGH_SCORE, K=None):
+    """
+    Calculate the rating changes for a single game
+
+    :param scores: List with the score for each player
+    :param ratings: List of the ratings for each player
+    :param score_type: Game type constant that can be one of the following constants 
+                       (available under the rayter.rater python module):
+                       SCORE_TYPE_HIGH_SCORE: Goal of game is to get as high score as possible
+                       SCORE_TYPE_LOW_SCORE:  Goal iof game is to get as low score as possible
+                       SCORE_TYPE_WINNER_TAKES_ALL: Game with a binary result (e.g. Chess). Using
+                                                    this score type is effectively the same as using
+                                                    SCORE_TYPE_HIGH_SCORE and seting the K parameter to 0.02.
+    :param K: Override how large fraction of each players rating that is "up for grabs" in the game. 
+              If not specified or set to None, K will be set automatically based on the score_type param.
+    :return: List of rating change for each player
+    """
+    # Normalize scores if there are negative scores   
+    normalized_scores = [to_normalized_score(s, scores) for s in scores]
+
+    # Switch to lowerscore if score_type is lowscore
+    if score_type == SCORE_TYPE_LOW_SCORE:
+        normalized_scores = [to_lowscore(s, normalized_scores) for s in normalized_scores]
+
+    # Calculate sums
+    scores_sum = math.fsum(normalized_scores)
+    ratings_sum = math.fsum(ratings)
+        
+    # Choose how big part of their rating each player puts in
+    if K is None:
+        if score_type == SCORE_TYPE_WINNER_TAKES_ALL:
+            K = 0.02
+        else:
+            K = 0.05
+
+    # If scores_sum is 0, it means that all scores are 0, since we've normalized 
+    # scores to not contain any negative values
+    if scores_sum == 0:
+        scores_sum = 100.0 * len(scores)
+        normalized_scores = [100.0 for s in range(len(scores))]
+
+    rating_changes = []
+    for score, old_rating in zip(normalized_scores, ratings):
+        # Calculate new rating
+        rating_in = K * old_rating
+        rating_out = (score / scores_sum) * K * ratings_sum
+        change = rating_out - rating_in
+        rating_changes.append(change)
+
+    return rating_changes
+
+
+
 class Rater(object):
     def __init__(self, games):
         self.games = games
@@ -37,42 +92,17 @@ class Rater(object):
         given game. The average rating will be the same before and after this 
         calculation has been called for all players.
         """
-        
-        old_rating = self.players[player].get_rating()
+        scores = []
+        ratings = []
+        player_idx = None
+        for i, (player_name, score) in enumerate(game['scores'].items()):
+            scores.append(score)
+            ratings.append(self.players[player_name].get_rating())
+            if player_name == player:
+                player_idx = i
 
-        # Normalize scores if there are negative scores
-        raw_scores = game['scores'].values()
-        score = to_normalized_score(game['scores'][player], raw_scores)    
-        scores = [to_normalized_score(s, raw_scores) for s in raw_scores]
-
-        # Switch to lowe scores if score_type is lowscore
-        if score_type == 'lowscore':
-            score = to_lowscore(score, scores)
-            scores = [to_lowscore(s, scores) for s in scores]
-
-        # Calculate sums
-        scores_sum = math.fsum(max(s, 0) for s in scores)
-        old_ratings_sum = math.fsum(self.players[p].get_rating() for p in game['scores'].keys())
-            
-        # Choose how big part of their rating each player puts in
-        if score_type == 'winnertakesall':
-            K = 0.02
-        else:
-            K = 0.05
-
-        # If scores_sum is 0, it means that all scores are 0, since we've normalized 
-        # scores to not contain any negative values
-        if scores_sum == 0:
-            scores_sum = 100.0 * len(scores)
-            score = 100.0
-
-        # Calculate new rating
-        rating_in = K * old_rating
-        rating_out = (score / scores_sum) * K * old_ratings_sum
-        change = rating_out - rating_in
-        new_rating = old_rating + change
-
-        return new_rating
+        rating_changes = rate_single_game(scores, ratings, score_type=score_type)
+        return ratings[player_idx] + rating_changes[player_idx]
 
 
     def cmp_rating(self, p1, p2):
