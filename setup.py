@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.2.0'
+version = '1.0.0'
 
 setup(
     name='rayter',
@@ -11,11 +11,11 @@ setup(
     description="Game rating command line tool",
     long_description="""Game rating command line tool""",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2 :: Only",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
         "Topic :: Games/Entertainment",
     ],
     keywords='',
@@ -33,5 +33,4 @@ setup(
             'rayter = rayter.main:main',
         ]
     },
-    #test_suite='rayter.test.runtests',
 )
