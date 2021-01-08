@@ -1,5 +1,5 @@
 test:
-	python -m unittest tests.runtests
+	python -m unittest discover
 
 dist: test dist/*
 	rm -f dist/*
