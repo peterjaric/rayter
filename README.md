@@ -1,6 +1,6 @@
 # Rayter
 
-![tests](https://github.com/actions/hello-world/workflows/.github/workflows/tests.yml/badge.svg)
+![tests](https://github.com/peterjaric/rayter/workflows/.github/workflows/tests.yml/badge.svg)
 
 Rayter is a program for generating player ratings from a number of games, 
 with the results stored in a file. 
