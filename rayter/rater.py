@@ -30,18 +30,18 @@ def rate_single_game(scores, ratings, score_type=SCORE_TYPE_HIGH_SCORE, K=None):
 
     :param scores: List with the score for each player
     :param ratings: List of the ratings for each player
-    :param score_type: Game type constant that can be one of the following constants 
+    :param score_type: Game type constant that can be one of the following constants
                        (available under the rayter.rater python module):
                        SCORE_TYPE_HIGH_SCORE: Goal of game is to get as high score as possible
                        SCORE_TYPE_LOW_SCORE:  Goal iof game is to get as low score as possible
                        SCORE_TYPE_WINNER_TAKES_ALL: Game with a binary result (e.g. Chess). Using
                                                     this score type is effectively the same as using
                                                     SCORE_TYPE_HIGH_SCORE and seting the K parameter to 0.02.
-    :param K: Override how large fraction of each players rating that is "up for grabs" in the game. 
+    :param K: Override how large fraction of each players rating that is "up for grabs" in the game.
               If not specified or set to None, K will be set automatically based on the score_type param.
     :return: List of rating change for each player
     """
-    # Normalize scores if there are negative scores   
+    # Normalize scores if there are negative scores
     normalized_scores = [to_normalized_score(s, scores) for s in scores]
 
     # Switch to lowerscore if score_type is lowscore
@@ -51,7 +51,7 @@ def rate_single_game(scores, ratings, score_type=SCORE_TYPE_HIGH_SCORE, K=None):
     # Calculate sums
     scores_sum = math.fsum(normalized_scores)
     ratings_sum = math.fsum(ratings)
-        
+
     # Choose how big part of their rating each player puts in
     if K is None:
         if score_type == SCORE_TYPE_WINNER_TAKES_ALL:
@@ -59,7 +59,7 @@ def rate_single_game(scores, ratings, score_type=SCORE_TYPE_HIGH_SCORE, K=None):
         else:
             K = 0.05
 
-    # If scores_sum is 0, it means that all scores are 0, since we've normalized 
+    # If scores_sum is 0, it means that all scores are 0, since we've normalized
     # scores to not contain any negative values
     if scores_sum == 0:
         scores_sum = 100.0 * len(scores)
@@ -87,8 +87,8 @@ class Rater(object):
 
     def calculate_new_rating_keep_average(self, score_type, player, game):
         """
-        Calculates new rating for a player based on old rating and result in the 
-        given game. The average rating will be the same before and after this 
+        Calculates new rating for a player based on old rating and result in the
+        given game. The average rating will be the same before and after this
         calculation has been called for all players.
         """
         scores = []
@@ -102,7 +102,10 @@ class Rater(object):
 
         rating_changes = rate_single_game(scores, ratings, score_type=score_type)
         return ratings[player_idx] + rating_changes[player_idx]
-        
+
+    # rate_games returns a list of tuples with the following format:
+    # (player_name, game_count, rating, rating_change)
+
     def rate_games(self, score_type):
         game_num = 0
         for game in self.games:
@@ -111,13 +114,13 @@ class Rater(object):
             for player in game['scores']:
                 if player not in self.players:
                     self.players[player] = Player(player)
-                   
+
             # Calculate ratings
             new_ratings = {}
             for player in game['scores']:
                 new_ratings[player] = self.calculate_new_rating(score_type, player, game)
-            
-           
+
+
             # Update ratings
             for player in new_ratings:
                 self.players[player].set_rating(new_ratings[player], game_num)
@@ -126,13 +129,13 @@ class Rater(object):
             #print math.fsum(rats) / len(rats)
 
         sorted_players = list(self.players.keys())
-        sorted_players.sort(key=lambda p: self.players[p].get_rating(), reverse=True) 
+        sorted_players.sort(key=lambda p: self.players[p].get_rating(), reverse=True)
 
         ratings = []
         for player in sorted_players:
-            ratings.append((player, 
-                            self.players[player].get_game_count(), 
+            ratings.append((player,
+                            self.players[player].get_game_count(),
                             round(self.players[player].get_rating()),
                             round(self.players[player].get_rating_change(game_num))))
-            
+
         return ratings

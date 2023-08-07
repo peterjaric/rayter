@@ -1,8 +1,8 @@
 # File format:
-# 
+#
 # [score_type lowscore|highscore|winnertakesall]
 # [game_name <name>]
-# 
+#
 # game <time>
 # <player> <score>
 # <player> <score>
@@ -12,7 +12,7 @@
 # Hash comments are OK
 #
 # Example:
-# 
+#
 # game 2010-08-02 20:12
 # Peter      100
 # Jonatan    210
@@ -62,7 +62,7 @@ class GamesParser(object):
         m = re.match(game_exp, line)
         if m is not None:
             time_string = m.group(1)
-            return { 
+            return {
                 'time': time_string,
                 'scores': {}
                 }
@@ -94,12 +94,16 @@ class GamesParser(object):
         current_game = None
         self.line_no = 0
 
+        # For each line in the file, try to parse it as a comment, empty line,
+        # type, game name, score or game.
+        # If the line marks the beginning of a new game, add the current game
+        # to the list of games and start a new game.
         for line in self.file:
             self.line_no += 1
             try:
                 if self.parse_comment(line) or self.parse_empty_line(line):
                     continue
-                
+
                 if self.parse_type(line):
                     continue
 
@@ -115,11 +119,11 @@ class GamesParser(object):
                         self.games.append(current_game)
                     current_game = new_game
                     continue
-    
+
                 raise UnexpectedStatementError('Syntax error on line %i: %s' % (self.line_no, line))
             except UnexpectedStatementError as e:
                 self.errors.append(e.args[0])
-        
+
         if current_game is not None:
             self.games.append(current_game)
 
