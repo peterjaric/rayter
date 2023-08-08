@@ -4,3 +4,4 @@ rayter.egg-info/**
 rayter.wpr
 dist/**
 venv/**
+build/**
