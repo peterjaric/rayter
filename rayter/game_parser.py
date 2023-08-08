@@ -19,17 +19,47 @@
 # Axel       134
 #
 #
-# After parsing we have a list of dicts that look like this:
-# { 'time': String, 'scores': dict }
+# After parsing we have a list of matches with a scores dict for each match.
 # The scores dict is a mapping between player names and their scores
 # in that game.
 
 import re
-import sys
-import math
-
 
 class UnexpectedStatementError(Exception): pass
+
+class Game(object):
+    def __init__(self, time_string, type):
+        self.time_string = time_string
+        self.scores = {}
+        self.type = type
+
+    def add_score(self, name, score):
+        self.scores[name] = score
+
+    @property
+    def winners(self):
+    # Find winner, taking score type into account
+        winners = []
+        winner_score = None
+
+        winner_score = None
+        for name, score in self.scores.items():
+            if self.type == 'lowscore':
+                if winner_score is None or score < winner_score:
+                    winner_score = score
+                    winners = [name]
+                elif score == winner_score:
+                    winners.append(name)
+            else:
+                if winner_score is None or score > winner_score:
+                    winner_score = score
+                    winners = [name]
+                elif score == winner_score:
+                    winners.append(name)
+        return winners
+
+    def set_score_type(self, type):
+        self.type = type
 
 
 class GamesParser(object):
@@ -43,8 +73,8 @@ class GamesParser(object):
         type_exp = '^score_type\s+(lowscore|highscore|winnertakesall)$'
         m = re.match(type_exp, line)
         if m is not None:
-                self.score_type = m.group(1)
-                return True
+            self.score_type = m.group(1)
+            return True
         else:
             return False
 
@@ -52,8 +82,8 @@ class GamesParser(object):
         name_exp = '^game_name\s+(.+)$'
         m = re.match(name_exp, line)
         if (m is not None):
-                self.game_name = m.group(1)
-                return True
+            self.game_name = m.group(1)
+            return True
         else:
             return False
 
@@ -62,23 +92,21 @@ class GamesParser(object):
         m = re.match(game_exp, line)
         if m is not None:
             time_string = m.group(1)
-            return {
-                'time': time_string,
-                'scores': {}
-                }
+            return Game(time_string, self.score_type)
         else:
             return None
 
-    def parse_score(self, line, game_dict):
+    def parse_score(self, line, current_game):
         score_exp = '^([a-zA-Z\+]+)\s+(-?[0-9]+)\s*$'
         m = re.match(score_exp, line)
         if m is not None:
-            if game_dict is None:
+            if current_game is None:
                 raise UnexpectedStatementError('Spurious score (no current game) on line %i' % self.line_no)
             else:
+                # Add score to current game
                 name = m.group(1)
                 score = int(m.group(2))
-                game_dict['scores'][name] = score
+                current_game.add_score(name, score)
                 return True
         else:
             return False
@@ -124,6 +152,7 @@ class GamesParser(object):
             except UnexpectedStatementError as e:
                 self.errors.append(e.args[0])
 
+        # Add the last game
         if current_game is not None:
             self.games.append(current_game)
 

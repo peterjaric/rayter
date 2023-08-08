@@ -94,7 +94,7 @@ class Rater(object):
         scores = []
         ratings = []
         player_idx = None
-        for i, (player_name, score) in enumerate(game['scores'].items()):
+        for i, (player_name, score) in enumerate(game.scores.items()):
             scores.append(score)
             ratings.append(self.players[player_name].get_rating())
             if player_name == player:
@@ -111,15 +111,14 @@ class Rater(object):
         for game in self.games:
             game_num += 1
             # Add any new players to the players dict
-            for player in game['scores']:
+            for player in game.scores:
                 if player not in self.players:
                     self.players[player] = Player(player)
 
             # Calculate ratings
             new_ratings = {}
-            for player in game['scores']:
+            for player in game.scores:
                 new_ratings[player] = self.calculate_new_rating(score_type, player, game)
-
 
             # Update ratings
             for player in new_ratings:

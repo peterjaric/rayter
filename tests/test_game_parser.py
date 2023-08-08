@@ -67,13 +67,13 @@ Molgan     -666
 """
         parser = GamesParser(StringIO(data), "test")
         parser.parse_file()
-        self.assertEqual(parser.games[0]["scores"]["Molgan"], -666)
+        self.assertEqual(parser.games[0].scores["Molgan"], -666)
         self.assertEqual(len(parser.errors), 0)
 
     def test_parse_errors(self):
         data = \
 """
-game_name Invalid date - one syntax error, two spurious scores 
+game_name Invalid date - one syntax error, two spurious scores
 
 game 2012-01+19 15:12
 Jonatan    1337
@@ -88,8 +88,54 @@ Molgan     -666
         data = \
 """
 #
-# 
+#
 """
         parser = GamesParser(StringIO(data), "test")
         parser.parse_file()
         self.assertEqual(len(parser.errors), 0)
+
+    def test_hiscore_winner(self):
+        data = \
+"""
+game_name Cool game
+
+game 2012-01-19 15:12
+Jonatan    1337
+Molgan     666
+"""
+        parser = GamesParser(StringIO(data), "test")
+        parser.parse_file()
+        self.assertEqual("Jonatan", parser.games[0].winners[0])
+        self.assertEqual(len(parser.errors), 0)
+
+    def test_lowscore_winner(self):
+        data = \
+"""
+game_name Cool game
+score_type lowscore
+game 2012-01-19 15:12
+Jonatan    1337
+Molgan     666
+"""
+        parser = GamesParser(StringIO(data), "test")
+        parser.parse_file()
+        self.assertEqual("Molgan", parser.games[0].winners[0])
+        self.assertEqual(len(parser.errors), 0)
+
+    def test_multiple_winners(self):
+        data = \
+"""
+game_name Cool game
+
+game 2012-01-19 15:12
+Jonatan    1337
+Peter      1337
+Molgan     666
+"""
+        parser = GamesParser(StringIO(data), "test")
+        parser.parse_file()
+        self.assertEqual(2, len(parser.games[0].winners))
+        self.assertTrue("Jonatan" in parser.games[0].winners)
+        self.assertTrue("Peter" in parser.games[0].winners)
+        self.assertEqual(len(parser.errors), 0)
+

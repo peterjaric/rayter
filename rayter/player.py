@@ -16,7 +16,7 @@ class Player(object):
         return game in self.rating_history
 
     def get_rating(self, game = None):
-        if self.get_game_count() is 0:
+        if self.get_game_count() == 0:
             game = 0
         elif game is None:
             game = self.last_game
@@ -24,13 +24,13 @@ class Player(object):
             game = 0
 
         if not self.has_played(game):
-            if game is not 0:
+            if game != 0:
                 return self.get_rating(game - 1)
             else:
                 return START_RATING
         else:
             return self.rating_history[game]
-    
+
     def set_rating(self, rating, game_num):
         self.rating_history[game_num] = rating
         self.last_game = game_num
