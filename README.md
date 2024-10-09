@@ -2,8 +2,8 @@
 
 ![tests](https://github.com/peterjaric/rayter/workflows/Tests/badge.svg)
 
-Rayter is a program for generating player ratings from a number of games, 
-with the results stored in a file. 
+Rayter is a program for generating player ratings from a number of games,
+with the results stored in a file.
 
 It can be used in the form as a command line program, or as a Python library.
 
@@ -36,8 +36,8 @@ Rayter can be used as a python library
 
 ## Rayter file format
 
-The rayter file format expected by the Rayter Command Line Tool is designed 
-to be easily created by hand using a text editor. Here is an example for a 
+The rayter file format expected by the Rayter Command Line Tool is designed
+to be easily created by hand using a text editor. Here is an example for a
 file containing two games of Hearts:
 
 <pre>
@@ -57,8 +57,8 @@ Jakob       70
 </pre>
 
 **score_type lowscore** means that in this game the goal is to have as
-low score as possible. The options for `score_type` are `lowscore`, 
-`highscore` (the default, if score_type is not specified), and 
+low score as possible. The options for `score_type` are `lowscore`,
+`highscore` (the default, if score_type is not specified), and
 `winner_takes_all` (used for games with binary results, e.g. Chess).
 
 Number of whitespace characters doesn't matter.

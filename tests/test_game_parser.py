@@ -139,3 +139,36 @@ Molgan     666
         self.assertTrue("Peter" in parser.games[0].winners)
         self.assertEqual(len(parser.errors), 0)
 
+    def test_parse_international_names(self):
+        data = \
+"""
+game_name Name game
+
+game 2012-01-19 15:12
+Álvaro      1
+Zoë         2
+Søren       3
+Łukasz      4
+Çağla       5
+Björn       6
+François    7
+Dvořák      8
+Saša        9
+İpek        10
+Márta       11
+Máximo      12
+Jürgen      13
+Faïza       14
+Renée       15
+Ngô         16
+Hàníf       17
+Sáng-hōng   18
+Māori       19
+Chidiébére  20
+Dhanésh     21
+C++         22
+"""
+        parser = GamesParser(StringIO(data), "test")
+        parser.parse_file()
+        self.assertEqual(0, len(parser.errors))
+
